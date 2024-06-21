@@ -1,0 +1,10 @@
+R_LIBS='/usr/local/lib/R/site-library:/usr/local/lib/R/library'
+CRAN=https://packagemanager.rstudio.com/cran/__linux__/focal/latest
+CWD=/
+LANG=en_US.UTF-8
+PANDOC_VERSION=default
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+R_HOME=/usr/local/lib/R
+SHINY_SERVER_VERSION=latest
+TZ=Etc/UTC
+VROOM_CONNECTION_SIZE="500000"

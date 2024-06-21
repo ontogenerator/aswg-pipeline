@@ -11,7 +11,6 @@ def get_reports(dois, doi_source=None, force_pdf=False, use_scaled=False, worker
     from barzooka import barzooka
     from sciscore import sciscore
     from oddpub import oddpub
-    from release import generate_tweet_text
     import shutil
     import os
     from tqdm import tqdm
@@ -20,9 +19,9 @@ def get_reports(dois, doi_source=None, force_pdf=False, use_scaled=False, worker
     from rtransparent import rtransparent
     from generate_html import generate_html
 
-    if os.path.exists('temp'):
-        shutil.rmtree('temp')
-    os.mkdir('temp')
+    #if os.path.exists('temp'):
+    #    shutil.rmtree('temp')
+    os.mkdir('temp', 0o777)
     os.mkdir('temp/discussion')
     os.mkdir('temp/methods')
     os.mkdir('temp/all_text')
@@ -63,25 +62,15 @@ def get_reports(dois, doi_source=None, force_pdf=False, use_scaled=False, worker
     output = {}
     for doi in dois:
         print('Generating output for doi ' + doi)
-        html = generate_html(doi_to_metadata, jetfighter_results, limitation_recognizer_results, sciscore_results, barzooka_results, oddpub_results, reference_check_results, rtransparent_results)
-        tweet_text = generate_tweet_text(doi_to_metadata[doi]['title'],
-                                         doi_to_metadata[doi]['url'],
-                                         sciscore_results[doi]['is_modeling_paper'],
-                                         sum([sr['srList'][0]['sentence'] not in {'not detected.', 'not required.'} for sr in sciscore_results[doi]['raw_json']['rigor-table']['sections'] if sr['title'] in {'Sex as a biological variable', 'Randomization', 'Blinding', 'Power Analysis', 'Cell Line Authentication', 'Ethics'}]),
-                                         sum([1 for sr in sciscore_results[doi]['raw_json']['rigor-table']['sections'] if sr['title'] in {'Sex as a biological variable', 'Randomization', 'Blinding', 'Power Analysis', 'Cell Line Authentication', 'Ethics'}]),
-                                         sum([sum([len(sr['mentions']) for sr in section['srList']]) for section in sciscore_results[doi]['raw_json']['sections']]),
-                                         oddpub_results[doi]['open_code'], oddpub_results[doi]['open_data'],
-                                         barzooka_results[doi]['graph_types']['bar'] > 0,
-                                         len(limitation_recognizer_results[doi]['sents']) > 0,
-                                         len(jetfighter_results[doi]['page_nums']) > 0) #we could add reference check to the list of things we tweet about
-
+        #html = generate_html(doi_to_metadata, jetfighter_results, limitation_recognizer_results, sciscore_results, barzooka_results, oddpub_results, reference_check_results, rtransparent_results)
+        html = generate_html(doi_to_text, jetfighter_results, limitation_recognizer_results, sciscore_results, barzooka_results, oddpub_results, reference_check_results, rtransparent_results)
+	
         output[doi] = {'url': doi_to_metadata[doi]['url'],
                        'title': doi_to_metadata[doi]['title'],
                        'abstract': doi_to_metadata[doi]['abstract'],
                        'authors': doi_to_metadata[doi]['authors'],
                        'publication_date': doi_to_metadata[doi]['date'].strftime('%m/%d/%Y'),
                        'html_report': html,
-                       'tweet_text': tweet_text,
                        'discussion_text': doi_to_text[doi][0],
                        'methods_text': doi_to_text[doi][1],
                        'all_text': doi_to_text[doi][2],

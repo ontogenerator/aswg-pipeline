@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+auth.env
+database
+frontend
+temp
+screenit-pipeline.Rproj

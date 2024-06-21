@@ -8,8 +8,6 @@ def oddpub():
     f = open('temp/oddpub.csv', 'r')
     next(f)
     for row in csv.reader(f, delimiter=' '):
-        import sys
-        print(row, file=sys.stderr)
         doi = row[1].replace('"', '').replace('.txt', '').replace('_', '/')
         open_data = row[2] == 'TRUE'
         open_code = row[4] == 'TRUE'

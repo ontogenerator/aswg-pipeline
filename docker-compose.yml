@@ -2,13 +2,13 @@ version: "3"
 services:
   database:
     image: postgres:12
-    container_name: database
+    container_name: pipeline-database
     env_file:
       - auth.env
     networks:
-      - database-network
+      - pgnetwork
     ports:
-      - 5434:5432
+      - 5431:5432
     volumes:
       - ./database:/var/lib/postgresql/data
 
@@ -17,12 +17,26 @@ services:
     env_file:
       - auth.env
     networks:
-      - database-network
+      - pgnetwork
     ports:
-      - "8000:8000"
+      - 8000:8000
+      
+  shiny:
+    build: frontend
+    networks:
+      - pgnetwork
+    ports:
+      - 3838:3838
+    volumes:
+      - /data01/shinyapps:/srv/shiny-server
+      - /data01/shinylogs:/var/log/shiny-server
+      
+  
 
 volumes:
   database:
+  shinyapps:
+  shinylogs:
 
 networks:
-  database-network:
+  pgnetwork:

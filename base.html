@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <style>
 	table {
-		max-width: 500px;
+		max-width: 600px;
+		table-layout: fixed;
 		border-collapse: collapse;
+		word-wrap: break-word;
 	}
 
 	td, th {
@@ -11,7 +13,11 @@
 	}
 
 	.description-column {
-		width: 100px;
+		max-width: 150px;
+	}
+
+    .sentence-column {
+		max-width: 300px;
 	}
 
 	.icon-column {
@@ -20,28 +26,6 @@
 		font-size: 30px;
 		border-right: solid 1px #FFF;
 	}
-
-	.check-mark {
-		color: green;
-	}
-
-	.cross-mark {
-		color: red;
-	}
-
-	.icon-in-text {
-		font-size: 30px;
-	}
-
-    blockquote{
-        font-style:italic;
-        color: #555555;
-        padding:1.2em 10px 1.2em 10px;
-        border-left:8px solid #2f2f2f ;
-        line-height:1.6;
-        position: relative;
-        background:#EDEDED;
-    }
 
     blockquote span{
         display:block;
@@ -54,13 +38,32 @@
 
 <meta charset='utf-8'>
 <html>
-	This is an automated report for <a href=_PAPER_LINK_>_PAPER_ID_</a>.
-	<ul>
-		<li><a class='icon-in-text cross-mark'>✖</a> - critical issue</li>
-		<li><a class='icon-in-text'>⚠</a> - review for potential issues</li>
-		<li><a class='icon-in-text check-mark'>✔</a> - no action required</li>
+
+<div style="width:600px; margin:0 auto; text-align:justify; max-width:600px;">
+	<img src="screen_it_bot.png" width="100">
+	<h1>ScreenIT Report</h1>
+	This is an automated report for _PAPER_ID_.
+    <br><br>We are an independent group of scientists developing automated tools that analyze academic papers.
+        A set of automated tools screened your preprint/submitted manuscript and provided the report below.
+	Each tool was created by your academic colleagues with the goal of helping authors.
+	The tools look for factors that are important for transparency, rigor and reproducibility,
+	and we hope that the report might help you to improve reporting in your manuscript.
+	Within the report you will find links to more information about the items that the tools check.
+	These links include helpful papers, websites, or videos that explain why the item is important.
+ 	<br><br>The tools are not perfect and we apologize if they have missed something in your paper or screened
+	for something that doesn’t apply to the type of study that you performed.
+	Each tool has limitations that are described on the ScreenIT website.
+	The tools screen the main file for the paper; they are not able to screen supplements stored in separate files.
+	<br><br>If you would like to reach out to us, please send us an email at ScreenIt@bih-charite.de.
+	<br><br><br><b>How to read the report:</b>
+	<ul style="list-style: none;">
+		<li><img src="green.png" width="40"> - no action required</li>
+		<li><img src="yellow.png" width="40"> - review for potential issues</li>
+        <li><img src="red.png" width="40"> - a critical issue was found by a tool</li>
+        <li><img src="gray.png" width="40"> - may not be applicable to your paper</li>
+        <li><img src="info.png" width="40"> - more information about this item can be obtained using this link</li>
 	</ul>
 
     _TABLES_
-    
+</div>
 </html>
