@@ -51,5 +51,6 @@ for path, dirs, files in os.walk(path_of_the_directory):
 end = time.time()
 print('Folder processed')
 t_elapsed = round((end - start)/60, 3)
-print(f'Stopped after {t_elapsed} minutes, processing at a rate of {t_elapsed/len(l_files)} minutes per file with a total of len(l_files) files.')
+print(f'Stopped after {t_elapsed} minutes, processing at a rate of {t_elapsed/len(l_files)} minutes per file with a total of {len(l_files)} files.')
 
+# edit to save report somewhere

@@ -10,7 +10,6 @@ from trial_identifier import trial_identifier
 from barzooka import barzooka
 from sciscore import sciscore
 from oddpub import oddpub
-from scite_ref_check import scite_ref_check
 from rtransparent import rtransparent
 import shutil
 from unidecode import unidecode
@@ -31,6 +30,7 @@ async def upload(file: UploadFile = File(...)):
     os.mkdir('temp/discussion')
     os.mkdir('temp/methods')
     os.mkdir('temp/all_text')
+    os.mkdir('temp/oddpub_text', 0o777)
     os.mkdir('temp/images')
     f_name = f'temp/{token}.pdf'
     contents = await file.read()
@@ -51,8 +51,6 @@ async def report(request: Request):
     open(f'temp/methods/{token}.txt', 'w', encoding='utf-8').write(methods)
     open(f'temp/all_text/{token}.txt', 'w', encoding='utf-8').write(all)
     print(filename)
-    #print('running robotreviewer')
-    #robotreviewer_results = robotreviewer()
     print('running jetfighter')
     jetfighter_results = jetfighter(False, 1)
     print('running limitation')
@@ -65,11 +63,9 @@ async def report(request: Request):
     barzooka_results = barzooka()
     print('running oddpub')
     oddpub_results = oddpub()
-    print('running ref check')
-    reference_check_results = scite_ref_check([token])
     print('running rtransparent')
     rtransparent_results = rtransparent()
-    html = generate_html(token, filename, jetfighter_results, limitation_recognizer_results, trial_identifier_results, sciscore_results, barzooka_results, oddpub_results, reference_check_results, rtransparent_results)
+    html = generate_html(token, filename, jetfighter_results, limitation_recognizer_results, trial_identifier_results, sciscore_results, barzooka_results, oddpub_results, rtransparent_results)
     open(f'pdfs/{token}.html', 'w').write(html.replace('<div style="width:600px; margin:0 auto;">', '<div style="width:600px;">').replace('width: 300px;', 'width: 200px;'))
     subprocess.call(f'weasyprint pdfs/{token}.html pdfs/{token}.pdf -p', shell=True)
     return {'html': html}
@@ -131,8 +127,6 @@ async def dbupdate(request: Request):
     print(barzooka_results)
     print('running oddpub')
     oddpub_results = oddpub()
-    print('running ref check')
-    reference_check_results = scite_ref_check([token])
     print('running rtransparent')
     rtransparent_results = rtransparent()
     print(rtransparent_results)
@@ -142,9 +136,9 @@ async def dbupdate(request: Request):
     insert into papers (filename, discussion_text, methods_text, all_text,
     jet_page_numbers, limitation_sentences, trial_numbers, sciscore, is_modeling_paper,
     graph_types, is_open_data, is_open_code, 
-    reference_check, coi_statement, funding_statement, registration_statement
+    coi_statement, funding_statement, registration_statement
     )
-    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) on conflict (filename) do nothing
+    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) on conflict (filename) do nothing
     ''',
     (filename, discussion, methods, all,
     json.dumps(jetfighter_results[token]['page_nums']),
@@ -155,7 +149,6 @@ async def dbupdate(request: Request):
     json.dumps(barzooka_results[token]['graph_types']),
     oddpub_results[token]['open_data'],
     oddpub_results[token]['open_code'],
-    json.dumps(reference_check_results[token]['raw_json']),
     rtransparent_results[token]['coi_statement'],
     rtransparent_results[token]['funding_statement'],
     rtransparent_results[token]['registration_statement']

@@ -3,6 +3,8 @@ from zipfile import ZipFile
 import os
 import json
 import string
+import re
+from unidecode import unidecode
 
 
 _USER_ID = os.environ['SCISCORE_USER_ID']
@@ -18,7 +20,9 @@ class SciScore:
         if methods == '':
             self._methods = 'blank'
         else:
-            self._methods = methods.replace('', '').replace('', '').replace('𝚪', 'gamma').replace('∀', ' for all ').replace('𝒩', 'N')
+            chars_to_remove = re.compile(r'[\x01-\x18]', re.U)
+            self._methods = unidecode(chars_to_remove.sub('', methods.replace('𝚪', 'gamma').replace('∀', ' for all ').replace('𝒩', 'N')))
+            
         self._id = id.replace('/', '_')
 
     def get_report(self, file):
@@ -29,17 +33,17 @@ class SciScore:
                   'apiKey': _API_KEY,
                   'jsonOutput': 'true'}
         zip_file = file + '.zip'
-        r = requests.post(url=_URL, data=params, timeout=305)
+        r = requests.post(url=_URL, data=params, timeout=160)
         if r.status_code != 200:
             print('using small charset, trying again')
             self._methods = ''.join([char for char in self._methods if char in _SMALL_CHARSET])
             params['sectionContent'] = self._methods
-            r = requests.post(url=_URL, data=params, timeout=305)
+            r = requests.post(url=_URL, data=params, timeout=160)
             if r.status_code != 200:
                 print('using extra small charset, trying again')
                 self._methods = ''.join([char for char in self._methods if char in _EXTRA_SMALL_CHARSET])
                 params['sectionContent'] = self._methods
-                r = requests.post(url=_URL, data=params, timeout=305)
+                r = requests.post(url=_URL, data=params, timeout=160)
                 if r.status_code != 200:
                     print('SciScore down:', r.text)
                     exit()

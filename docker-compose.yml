@@ -26,7 +26,7 @@ services:
     networks:
       - pgnetwork
     ports:
-      - 3838:3838
+      - 3839:3838
     volumes:
       - /data01/shinyapps:/srv/shiny-server
       - /data01/shinylogs:/var/log/shiny-server

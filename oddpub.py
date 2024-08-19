@@ -1,10 +1,11 @@
 import subprocess
 import csv
-
+import os
 
 def oddpub():
     output = {}
-    subprocess.call(['Rscript', 'utils/oddpub/oddpub.R', 'temp/all_text/', 'temp/oddpub.csv'])#, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    subprocess.call(['Rscript', 'utils/oddpub/oddpub.R', 'temp/', 'temp/oddpub.csv'])
+    #subprocess.call(['Rscript', 'utils/oddpub/oddpub.R', 'temp/', 'temp/oddpub.csv'])#, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
     f = open('temp/oddpub.csv', 'r')
     next(f)
     for row in csv.reader(f, delimiter=' '):
