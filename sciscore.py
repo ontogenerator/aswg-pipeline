@@ -17,8 +17,8 @@ def sciscore():
         paper.get_report(zip_name)
         raw = json.loads(open(zip_name + '/report.json', 'r', encoding='utf-8').read())
         raw['docIdentifier'] = raw['docIdentifier'].replace('_', '/')
-        #is_modeling = bool(predict_if_model_paper(methods))
-        is_modeling = False
+        is_modeling = bool(predict_if_model_paper(methods))
+        #is_modeling = False
         output[doi] = {'raw_json': raw, 'is_modeling_paper': is_modeling}
         time.sleep(5)
     return output
