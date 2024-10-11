@@ -13,12 +13,15 @@ from PIL import Image
 #todo line number removal doesn't work on 10.1101/2020.11.06.372037
 model = fasttext.load_model('utils/extractor/methods-model.bin')
 nlp = English()
-sentencizer = nlp.create_pipe('sentencizer')
-nlp.add_pipe(sentencizer)
+#sentencizer = nlp.create_pipe('sentencizer')
+sentencizer = nlp.add_pipe('sentencizer')
+#nlp.add_pipe(sentencizer)
 
 REFERENCES_TERMS = ['Citations', 'CITATIONS', 'References', 'REFERENCES', 'Reference', 'REFERENCE', 'Bibliography', 'BIBLIOGRAPHY', 'Works Cited', 'WORKS CITED']
 DISCUSSION_TERMS = ['Discussion', 'DISCUSSION', 'Discussion and Conclusion', 'Discussion and Conclusions', 'DISCUSSION AND CONCLUSION', 'DISCUSSION AND CONCLUSIONS'] #should results and discussion be included?
 DISCUSSION_END_TERMS = ['Citations', 'CITATIONS', 'References', 'REFERENCES', 'Bibliography', 'BIBLIOGRAPHY', 'Works Cited', 'WORKS CITED', 'Acknowledgements', 'ACKNOWLEDGEMENTS', 'Acknowledgments', 'ACKNOWLEDGMENTS', 'Author contribution', 'Author contributions', 'AUTHOR CONTRIBUTION', 'AUTHOR CONTRIBUTIONS', 'Contributions', 'CONTRIBUTIONS', 'Conflicts of interest', 'CONFLICTS OF INTEREST', 'Conflict of interest', 'CONFLICT OF INTEREST', 'Data availability', 'DATA AVAILABILITY', 'Code availability', 'CODE AVAILABILITY', 'Figure legends', 'FIGURE LEGENDS', 'Figures', 'FIGURES', 'Conclusion', 'CONCLUSION', 'Conclusions', 'CONCLUSIONS']
+METHODS_TERMS = ['Method', 'METHOD', 'Methods', 'METHODS', 'Materials and Methods', 'Materials and methods', 'MATERIALS AND METHODS', 'Material and Method', 'Material and method', 'MATERIAL AND METHOD', 'Materials and Methods', 'Materials and methods', 'MATERIALS AND METHODS', 'Material & Method', 'Material & method', 'MATERIAL & METHOD', 'Materials & Methods', 'Materials & methods', 'MATERIALS & METHODS', 'Online Methods', 'Online methods', 'ONLINE METHODS', 'Online method', 'Online Method', 'ONLINE METHOD']
+METHODS_END_TERMS = REFERENCES_TERMS + DISCUSSION_END_TERMS + ['Results', 'RESULTS', 'Result', 'RESULTS', 'Experiment', 'EXPERIMENT', 'Experiments', 'EXPERIMENTS']
 
 
 class PDF:
@@ -152,6 +155,9 @@ class PDF:
             text = self._without_section(text, DISCUSSION_END_TERMS, False)
             return self._remove_whitespace(text)
         elif section == 'methods':
+            text = self._start_at_section(text, METHODS_TERMS)
+            text = self._without_section(text, METHODS_END_TERMS, False)
+            return self._remove_whitespace(text)
             text = self._without_section(text, REFERENCES_TERMS, False)
             text = self._remove_whitespace(text)
             sents = []
