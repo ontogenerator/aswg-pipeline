@@ -13,7 +13,12 @@ services:
       - ./database:/var/lib/postgresql/data
 
   pipeline:
-    build: .
+    build:
+      context: .
+      args:
+        - BUILDKIT_PROGRESS=plain
+        - BUILDKIT_PROVENANCE=false
+        - BUILDKIT_SBOM=false
     env_file:
       - auth.env
     networks:
@@ -26,7 +31,7 @@ services:
     networks:
       - pgnetwork
     ports:
-      - 3839:3838
+      - 3838:3838
     volumes:
       - /data01/shinyapps:/srv/shiny-server
       - /data01/shinylogs:/var/log/shiny-server

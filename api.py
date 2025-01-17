@@ -17,6 +17,7 @@ from generate_html import generate_html
 import subprocess
 import psycopg2
 import json
+import uvicorn
 
 app = FastAPI()
 
@@ -70,6 +71,7 @@ async def report(request: Request):
     subprocess.call(f'weasyprint pdfs/{token}.html pdfs/{token}.pdf -p', shell=True)
     return {'html': html}
 
+
 @app.post('/dbupdate')
 async def dbupdate(request: Request):
     r = await request.json()
@@ -78,6 +80,7 @@ async def dbupdate(request: Request):
     discussion = r['discussion']
     methods = r['methods']
     all = r['all']
+    generate_report = r['generate_report']
     open(f'temp/discussion/{token}.txt', 'w', encoding='utf-8').write(discussion)
     open(f'temp/methods/{token}.txt', 'w', encoding='utf-8').write(methods)
     open(f'temp/all_text/{token}.txt', 'w', encoding='utf-8').write(all)
@@ -138,7 +141,7 @@ async def dbupdate(request: Request):
     graph_types, is_open_data, is_open_code, 
     coi_statement, funding_statement, registration_statement
     )
-    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) on conflict (filename) do nothing
+    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) on conflict (filename) do update
     ''',
     (filename, discussion, methods, all,
     json.dumps(jetfighter_results[token]['page_nums']),
@@ -156,6 +159,10 @@ async def dbupdate(request: Request):
     conn.commit()
     print('database update completed')
 
+    if generate_report==True:
+        html = generate_html(token, filename, jetfighter_results, limitation_recognizer_results, trial_identifier_results, sciscore_results, barzooka_results, oddpub_results, rtransparent_results)
+        print(f'generated report for {filename}')
+        return {'html': html}
 
 
 @app.post('/dbcheck')
@@ -179,3 +186,22 @@ async def dbcheck(request: Request):
 @app.get('/pdf')
 async def pdf(token):
     return FileResponse(f'pdfs/{token}.pdf')
+
+@app.post('/rawlimitations')
+async def rawlimitations(request: Request):
+    r = await request.json()
+    discussion = r['discussion']
+    token = r['token']
+    filename = r['filename']
+    open(f'temp/discussion/{token}.txt', 'w', encoding='utf-8').write(discussion)
+    print(filename)
+    print('running limitation')
+    limitation_recognizer_results = limitation_recognizer()
+    print(limitation_recognizer_results)
+    #html = generate_html(token, filename, jetfighter_results, limitation_recognizer_results, trial_identifier_results, sciscore_results, barzooka_results, oddpub_results, rtransparent_results)
+    #open(f'pdfs/{token}.html', 'w').write(html.replace('<div style="width:600px; margin:0 auto;">', '<div style="width:600px;">').replace('width: 300px;', 'width: 200px;'))
+    #subprocess.call(f'weasyprint pdfs/{token}.html pdfs/{token}.pdf -p', shell=True)
+    return {filename: json.dumps(limitation_recognizer_results[token]['sents'])}
+
+#if __name__ == "__main__":
+#    uvicorn.run("api:app", host="127.0.0.1", reload=True, port=8002)

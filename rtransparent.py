@@ -17,10 +17,11 @@ while True:
 def rtransparent():
     output = {}
     for f_name in os.listdir('temp/all_text'):
-        subprocess.call(['Rscript', 'utils/rtransparent/rtransparent.R', 'temp/all_text/' + f_name, 'temp/rtransparent.csv'])
+        subprocess.call(['Rscript', 'utils/rtransparent/rtransparent.R', 'temp/oddpub_text/' + f_name, 'temp/rtransparent.csv'])
         f = open('temp/rtransparent.csv', 'r')
         next(f)
         for line in csv.reader(f, delimiter=' '):
+            print(line[7])
             is_coi, is_fund, is_register = line[3] == 'TRUE', line[5] == 'TRUE', line[7] == 'TRUE'
             output[f_name.replace('_', '/').replace('.txt', '')] = {'coi_statement': is_coi, 'funding_statement': is_fund, 'registration_statement': is_register}
             break

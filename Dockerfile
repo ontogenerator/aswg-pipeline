@@ -28,13 +28,11 @@ RUN Rscript \
     -e 'install.packages("pdftools", dependencies = TRUE, repos = "http://cran.us.r-project.org")' \
     -e 'install.packages("tidyverse", dependencies = TRUE)' \
     -e 'devtools::install_github("quest-bih/oddpub")' \
-    -e 'devtools::install_github("serghiou/rtransparent@edb1eb9f4628fe372b9850a893bb70ba6e58f673")' \
-    -e 'devtools::install_github("maia-sh/ctregistries")'
-
-
+    -e 'devtools::install_github("maia-sh/ctregistries")' \
+    -e 'devtools::install_github("serghiou/rtransparent@edb1eb9f4628fe372b9850a893bb70ba6e58f673")'
 
 RUN python3 -m pip install --upgrade pip \
-    && python3 -m pip install --no-cache-dir \
+    && python3 -m pip install --no-cache-dir --use-deprecated=legacy-resolver \
         numpy==1.25.0 \
         psycopg2-binary \
         requests \
@@ -42,18 +40,21 @@ RUN python3 -m pip install --upgrade pip \
         requests-oauthlib \
         fasttext \
         spacy \
-        Pillow \
-        pandas==2.0.2 \
+        pymupdf \
+	    Pillow \
+        pandas==2.2.2 \
         scikit-learn \
         scikit-image \
         colorspacious \
-        fastai==2.7.12 \
+        fastai==2.7.13 \
         importlib_resources \
         unidecode \
-        fastapi \
         uvicorn \
         python-multipart \
-        weasyprint
+        fastapi \
+        weasyprint \
+        torch==2.4.0 \
+        torchvision==0.15.0
 
 COPY . .
 
